@@ -9,7 +9,6 @@ repro:
     - tidyverse
     - lubridate
     - aaronpeikert/repro@fc7e884
-    - penguins
   scripts:
     - R/prepare_inflation.R
   data:
