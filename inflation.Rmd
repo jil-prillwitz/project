@@ -2,7 +2,7 @@
 title: "Inflation Data"
 author: "Aaron Peikert"
 date: "`r Sys.Date()`"
-output: pdf_document
+output: html_document
 repro:
   packages:
     - here
@@ -40,7 +40,7 @@ I *quote*:
 For this dataset the Bank of England asked `r prettyNum(nrow(inflation), big.mark = ".", decimal.mark = ",")` people for their opinion on the perceived and expected inflation.
 The survey has run quarterly since `r min(inflation$year)`.
 
-```{r}
+```{r plot-inflation}
 inflation %>% 
   group_by(date) %>% 
   summarise(across(c(perception, expectation),
@@ -50,10 +50,34 @@ inflation %>%
   ungroup() %>% 
   ggplot() +
   geom_line(aes(date, value, color = name)) +
+  theme_minimal() + 
+  ylab("Subjective inflation in %-points") + 
+  xlab("Year") + 
+  labs(color = "") + 
+  theme(legend.position.inside = c(.1, .9)) +
   NULL
 ```
 
   
+```{r plot-inflation-five}
+inflation %>% 
+  filter(date >= as.Date("2020-01-01") & 
+           date <= as.Date("2025-12-31")) %>%
+  group_by(date) %>% 
+  summarise(across(c(perception, expectation),
+                   ~ mean(., na.rm = TRUE)),
+            .groups = "drop") %>% 
+  pivot_longer(c(expectation, perception)) %>% 
+  ungroup() %>% 
+  ggplot() +
+  geom_line(aes(date, value, color = name)) +
+  theme_minimal() + 
+  ylab("Subjective inflation in %-points") + 
+  xlab("Year") + 
+  labs(title = "5-Year Subjective Inflation in England", color = "") + 
+  theme(legend.position.inside = c(.1, .9)) +
+  NULL
+```
   
 
 ```
